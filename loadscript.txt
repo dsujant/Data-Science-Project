@@ -1,0 +1,182 @@
+ALTER TABLE clients_p ADD CONSTRAINT country_const_fk FOREIGN KEY (country_code) REFERENCES country(code) ON DELETE CASCADE;
+error because clients_p.country_code = '056' does not exist in country table
+
+user_p, finished_pub_author, salesperson r/s backward.
+
+ALTER TABLE finished_pubs_author ADD CONSTRAINT userid_const_fk FOREIGN KEY (user_id) REFERENCES user_p(id) ON DELETE CASCADE;
+
+
+add FOREIGN KEY (sales_office_id) REFERENCES sales_office(sales_office_id) to salesperson table
+
+
+error when copying contentype:
+ndr_ddms=> \copy contenttype from '/usr/share/databases/NedDavisResearch/clean/client_status.csv' null as 'NULL' CSV HEADER;
+ERROR:  missing data for column "has_editions"
+CONTEXT:  COPY contenttype, line 2: "S,1,Client"
+
+the filename should be contenttype.csv.  but still error even after changing file referenced to contenttype.csv
+ \copy contenttype from '/usr/share/databases/NedDavisResearch/clean/contenttype.csv' null as 'NULL' CSV HEADER;
+ERROR:  null value in column "default_format" violates not-null constraint
+DETAIL:  Failing row contains (5, Tool, TOOL, f, t, f, null, t, 5).
+CONTEXT:  COPY contenttype, line 6: "5,Tool,TOOL,0,1,0,NULL,1,5"
+
+
+CREATE TABLE contenttype (
+    contenttype_id TEXT PRIMARY KEY, 	
+    type text UNIQUE NOT NULL, 	
+    contenttype_key text UNIQUE NOT NULL,	
+    has_editions boolean not null,	
+    has_document_representation boolean not null,	
+    has_ordinals boolean not null,	
+    default_format TEXT,	
+    display_in_pcmt boolean not null,	
+    contenttype_source_id TEXT
+)
+
+drop notnull constraint on default_format column because there were some null values in the file for that column
+
+error when copying mobile_access.  filename chg to mobile_access_k2
+\copy mobile_access from '/usr/share/databases/NedDavisResearch/clean/mobile_access_k2.csv' null as 'NULL' CSV HEADER;
+
+
+CREATE TABLE content (
+    content_id TEXT PRIMARY KEY,
+    content_key TEXT UNIQUE NOT NULL,
+    title TEXT,
+    contenttype_id TEXT NOT NULL,
+    service TEXT,
+    category TEXT,
+    frequency TEXT,
+    schedule TEXT,
+    product TEXT,
+    employee_only BOOLEAN NOT NULL,
+    custom BOOLEAN NOT NULL,
+    beta BOOLEAN NOT NULL,
+    approval_method TEXT,
+    priority INT,
+    add_date TIMESTAMP,
+    edit_date TIMESTAMP,
+    dynamic_product BOOLEAN NOT NULL,
+    pub_chart BOOLEAN NOT NULL,
+    default_deliv_mthd TEXT,
+    default_format TEXT,
+    interactive BOOLEAN NOT NULL,
+    active BOOLEAN NOT NULL,
+    created_on TIMESTAMP,
+    last_modified_on TIMESTAMP,
+    third_party_only BOOLEAN,
+    still_publishing BOOLEAN,
+FOREIGN KEY (contenttype_id) REFERENCES contenttype(contenttype_id));
+
+
+ERROR:  foreign key constraint "content_contenttype_id_fkey" cannot be implemented
+DETAIL:  Key columns "contenttype_id" and "contenttype_id" are of incompatible types: integer and text.
+
+Change the datatype of contenttype to match with the one in contenttype table, which is TEXT instead of INT
+
+alter table team_member add constraint user_id_fk foreign key (user_id) references user_p(id) on delete cascade;
+
+==========================================================================================================
+CREATE TABLE mobile_device (
+    mobile_device_id text PRIMARY KEY,
+    cust_code text,
+   
+ device_make text,
+    device_model text,
+    unsecured_use_ndr_mobile_app int,
+    date_added timestamp,
+    enabled int,
+    
+date_updated timestamp)
+
+change the datatype of mobile_device_id to text
+
+ALTER TABLE mobile_access ADD CONSTRAINT mobile_device_const_fk FOREIGN KEY (mobile_device_id) REFERENCES mobile_device(mobile_device_id) 
+ON DELETE CASCADE;
+
+
+ndr_ddms=> ALTER TABLE mobile_access ADD CONSTRAINT mobile_device_const_fk FOREIGN KEY (mobile_device_id) REFERENCES mobile_device(mobile_device_id)
+ON DELETE CASCADE;
+ERROR:  insert or update on table "mobile_access" violates foreign key constraint "mobile_device_const_fk"
+DETAIL:  Key (mobile_device_id)=(3567) is not present in table "mobile_device".
+
+change datatype on content_id on contentedition to text
+
+CREATE TABLE contentedition (
+ contentedition_id int PRIMARY KEY,
+    content_id text,
+    contentedition_key text,
+    title text,
+    service text,
+    edition_date timestamp,
+    edition_time timestamp,
+    release_time timestamp,
+    begin_date timestamp,
+    market_date timestamp,
+    historical text,
+    archived text,
+    approved text,
+    id int,
+    Active int,
+    created_on timestamp,
+    last_modified_on timestamp
+);
+alter table contentedition add constraint content_id_fk foreign key (content_id) references content(content_id)
+
+
+\copy contentedition from '/usr/share/databases/NedDavisResearch/clean/Ned_Squad_Alpha/contentedition_clean.csv' DELIMITER ',' NULL AS 'NULL' CSV HEADER ENCODING 'windows-1252';
+
+Error when copying contentedition
+ndr_ddms=> \copy contentedition from '/usr/share/databases/NedDavisResearch/clean/Ned_Squad_Alpha/contentedition_clean.csv' DELIMITER ',' NULL AS 'NULL' CSV HEADER ENCODING 'windows-1252';
+ERROR:  insert or update on table "contentedition" violates foreign key constraint "content_id_fk"
+DETAIL:  Key (content_id)=(99969) is not present in table "content".
+
+CREATE TABLE companies_p (
+    company_id text PRIMARY KEY,
+    company text,
+    major_segment__c text,
+    primary_focus__c text,
+    active int,
+    created_on timestamp,
+    last_modified_on timestamp
+);
+
+\copy companies_p from '/usr/share/databases/NedDavisResearch/clean/Ned_Squad_Alpha/companies_p_stripped.csv' null as 'NULL' CSV HEADER;
+
+alter table product_entitlement add constraint cust_code_fk foreign key (cust_code) references clients_p(cust_code);
+
+\copy product from '/usr/share/databases/NedDavisResearch/clean/Ned_Squad_Alpha/product_stripped.csv' DELIMITER ',' null as 'NULL' CSV HEADER;
+
+alter table product_entitlement add constraint product_id_fk foreign key (product_id) references product(product_id);
+
+\copy product_type from '/usr/share/databases/NedDavisResearch/clean/Ned_Squad_Alpha/product_type_stripped.csv' DELIMITER ',' null as 'NULL' CSV HEADER;
+
+
+\copy product_entitlement from '/usr/share/databases/NedDavisResearch/clean/Ned_Squad_Alpha/product_entitlement_stripped.csv' null as 'NULL' CSV HEADER;
+
+alter table product add constraint product_type_fk foreign key (product_type_id) references product_type(product_type_id);
+
+\copy team from '/usr/share/databases/NedDavisResearch/clean/Ned_Squad_Alpha/team_stripped.csv' DELIMITER ',' null as 'NULL' CSV HEADER;
+
+CREATE TABLE team_type (
+    team_type_id int PRIMARY KEY,
+    team_name text,
+    team_description text,
+    ordinal int,
+    active int,
+    created_on timestamp,
+    last_modified_on timestamp
+);
+
+
+\copy team_type from '/usr/share/databases/NedDavisResearch/clean/Ned_Squad_Alpha/team_type_stripped.csv' null as 'NULL' CSV HEADER;
+alter table team add constraint team_type_fk foreign key (team_type_id) references team_type(team_type_id);
+
+SELECT schemaname,relname,n_live_tup 
+  FROM pg_stat_user_tables 
+  ORDER BY n_live_tup DESC;
+
+grant all on all tables in schema public to public;
+
+clntbroker_p_clean.csv
+\copy clntbroker_p from '/usr/share/databases/NedDavisResearch/clean/clntbroker_p_clean.csv' DELIMITER ',' null as 'NULL' CSV HEADER;

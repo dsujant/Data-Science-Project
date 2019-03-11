@@ -1,0 +1,658 @@
+select w.cust_code, w.download_type, d.download_type_desc from website2log w, download_type_ndr_com d where w.download_type = d.download_type limit 100;
+
+
+1. Group customers by the download_type
+select w.download_type, d.download_type_desc, count(*) from website2log w, download_type_ndr_com d 
+where w.download_type = d.download_type 
+group by w.download_type, d.download_type_desc;
+
+
+
+
+select w.cust_code, w.download_type, d.download_type_desc, w.contentedition_id, ct.product, ct.service 
+from website2log w, download_type_ndr_com d, contentedition c, content ct
+where w.download_type = d.download_type 
+and w.contentedition_id = c.contentedition_id
+and c.content_id = ct.content_id
+limit 100;
+
+ALTER TABLE contentedition
+ALTER COLUMN contentedition_id TYPE TEXT;
+
+
+select w.cust_code, w.download_type, d.download_type_desc, w.contentedition_id, ct.product, ct.service 
+from website2log w, download_type_ndr_com d, contentedition c, content ct
+where w.download_type = d.download_type
+and w.contentedition_id = c.contentedition_id
+and c.content_id = ct.content_id
+and ct.product is not null or ct.service is not null
+limit 100;
+
+
+select count(*)
+from website2log w, download_type_ndr_com d, contentedition c, content ct
+where w.download_type = d.download_type
+and w.contentedition_id = c.contentedition_id
+and c.content_id = ct.content_id
+and ct.product is not null or ct.service is not null
+
+-- query did not come back
+
+--look at the product first
+
+
+
+select w.cust_code, w.download_type, d.download_type_desc, w.contentedition_id, ct.product from website2log w, download_type_ndr_com d, contentedition c, content ct
+where w.download_type = d.download_type
+and w.contentedition_id = c.contentedition_id
+and c.content_id = ct.content_id
+and ct.product is not null
+and w.download_type ='LN'
+limit 100;
+
+
+2. Group customers by product
+select ct.product, count(*) from website2log w, download_type_ndr_com d, contentedition c, content ct
+where w.download_type = d.download_type
+and w.contentedition_id = c.contentedition_id
+and c.content_id = ct.content_id
+and ct.product is not null
+and w.download_type ='LN'
+group by ct.product
+order by 2 desc
+
+
+select ct.product, count(*) from website2log w, download_type_ndr_com d, contentedition c, content ct
+where w.download_type = d.download_type
+and w.contentedition_id = c.contentedition_id
+and c.content_id = ct.content_id
+and ct.product is not null
+and w.download_type ='PB'
+group by ct.product
+order by 2 desc
+
+select ct.product, s.status, count(*) from website2log w, download_type_ndr_com d, contentedition c, content ct, clients_p p, client_status s
+where w.download_type = d.download_type
+and w.contentedition_id = c.contentedition_id
+and c.content_id = ct.content_id
+and ct.product is not null
+and w.download_type ='LN'
+and w.cust_code = p.cust_code
+and p.client_status = s.status_code
+group by ct.product, s.status
+order by 3 desc
+
+select ct.product, s.status, mobile_device_id, count(*) from website2log w, download_type_ndr_com d, contentedition c, content ct, clients_p p, client_status s, mobile_device m
+where w.download_type = d.download_type
+and w.contentedition_id = c.contentedition_id
+and c.content_id = ct.content_id
+and ct.product is not null
+and w.cust_code = p.cust_code
+and p.client_status = s.status_code
+and p.cust_code = m.cust_code
+group by ct.product, s.status, mobile_device_id
+order by 3 desc 
+
+
+select ct.product, s.status, m.mobile_device_id, m.enabled, count(*) from website2log w, download_type_ndr_com d, contentedition c, content ct, clients_p p, client_status s, mobile_device m
+where w.download_type = d.download_type
+and w.contentedition_id = c.contentedition_id
+and c.content_id = ct.content_id
+and ct.product is not null
+and w.cust_code = p.cust_code
+and p.client_status = s.status_code
+and p.cust_code = m.cust_code
+and s.status_code ='P'
+group by ct.product, s.status, mobile_device_id
+order by 3 desc;
+
+
+select ct.product, s.status, m.mobile_device_id, m.enabled, count(*) from website2log w, download_type_ndr_com d, contentedition c, content ct, clients_p p, client_status s, mobile_device m
+where w.download_type = d.download_type
+and w.contentedition_id = c.contentedition_id
+and c.content_id = ct.content_id
+and ct.product is not null
+and w.cust_code = p.cust_code
+and p.client_status = s.status_code
+and p.cust_code = m.cust_code
+and s.status_code ='P'
+group by ct.product, s.status, mobile_device_id
+order by 3 desc;
+
+select ct.product, s.status, count(*) from website2log w, download_type_ndr_com d, contentedition c, content ct, clients_p p, client_status s
+where w.download_type = d.download_type
+and w.contentedition_id = c.contentedition_id
+and c.content_id = ct.content_id
+and ct.product is not null
+and w.cust_code = p.cust_code
+and p.client_status = s.status_code
+and s.status_code ='T'
+group by ct.product, s.status
+order by 3 desc
+
+
+
+#About 50% of Trial customers access the info thru their mobile devices
+#1. total Trial customers
+select count(*) from website2log w, download_type_ndr_com d, contentedition c, content ct, clients_p p, client_status s
+where w.download_type = d.download_type
+and w.contentedition_id = c.contentedition_id
+and c.content_id = ct.content_id
+and ct.product is not null
+and w.cust_code = p.cust_code
+and p.client_status = s.status_code
+and s.status_code ='T'
+
+
+#2. the trial customers who use mobile device
+select count(*) from website2log w, download_type_ndr_com d, contentedition c, content ct, clients_p p, client_status s, mobile_device m
+where w.download_type = d.download_type
+and w.contentedition_id = c.contentedition_id
+and c.content_id = ct.content_id
+and ct.product is not null
+and w.cust_code = p.cust_code
+and p.client_status = s.status_code
+and p.cust_code = m.cust_code
+and s.status_code ='T'
+group by ct.product, s.status, mobile_device_id
+order by 3 desc;
+
+
+#which segment/company/industry that these customers come from? What type of product are they interested in? 
+
+select a.primary_focus__c, ct.product, count(w.cust_code) from website2log w, download_type_ndr_com d, contentedition c,
+content ct, clients_p p, client_status s, mobile_device m, companies_p a
+where w.download_type = d.download_type
+and w.contentedition_id = c.contentedition_id
+and c.content_id = ct.content_id
+and ct.product is not null
+and w.cust_code = p.cust_code
+and p.client_status = s.status_code
+and p.cust_code = m.cust_code
+and a.company_id = p.company_code
+group by a.major_segment__c,ct.product
+order by 1,3 desc;
+
+select a.major_segment__c, ct.product, count(w.cust_code) from website2log w, download_type_ndr_com d, contentedition c,
+content ct, clients_p p, client_status s, companies_p a
+where w.download_type = d.download_type
+and w.contentedition_id = c.contentedition_id
+and c.content_id = ct.content_id
+and ct.product is not null
+and w.cust_code = p.cust_code
+and p.client_status = s.status_code
+and s.status_code ='T'
+and a.company_id = p.company_code
+group by a.major_segment__c,ct.product
+order by 1,3 desc;
+
+
+select ct.product, count(w.cust_code) from website2log w, download_type_ndr_com d, contentedition c,
+content ct, clients_p p, client_status s, companies_p a
+where w.download_type = d.download_type
+and w.contentedition_id = c.contentedition_id
+and c.content_id = ct.content_id
+and ct.product is not null
+and w.cust_code = p.cust_code
+and p.client_status = s.status_code
+and s.status_code ='T'
+and a.company_id = p.company_code
+group by ct.product
+order by 2 desc;
+
+
+
+
+psql -d ndr_ddms -t -A -F"," -c "select a.major_segment__c, ct.product, count(w.cust_code) from website2log w, download_type_ndr_com d, contentedition c,
+content ct, clients_p p, client_status s, companies_p a
+where w.download_type = d.download_type
+and w.contentedition_id = c.contentedition_id
+and c.content_id = ct.content_id
+and ct.product is not null
+and w.cust_code = p.cust_code
+and p.client_status = s.status_code
+and s.status_code ='T'
+and a.company_id = p.company_code
+group by a.major_segment__c,ct.product
+order by 1,3 desc" > /usr/share/databases/dsujanto/output.csv
+
+
+psql -d ndr_ddms -t -A -F"," -c "select ct.product, count(w.cust_code) from website2log w, download_type_ndr_com d, contentedition c,
+content ct, clients_p p, client_status s, companies_p a
+where w.download_type = d.download_type
+and w.contentedition_id = c.contentedition_id
+and c.content_id = ct.content_id
+and ct.product is not null
+and w.cust_code = p.cust_code
+and p.client_status = s.status_code
+and a.company_id = p.company_code
+group by ct.product
+order by 2 desc;" > /usr/share/databases/dsujanto/toptenproduct.csv
+
+
+select ct.service, count(w.cust_code) from website2log w, download_type_ndr_com d, contentedition c,
+content ct, clients_p p, client_status s, companies_p a
+where w.download_type = d.download_type
+and w.contentedition_id = c.contentedition_id
+and c.content_id = ct.content_id
+and ct.product is not null
+and w.cust_code = p.cust_code
+and p.client_status = s.status_code
+and a.company_id = p.company_code
+group by ct.service
+order by 2 desc;
+
+psql -d ndr_ddms -t -A -F"," -c "select ct.service, count(w.cust_code) from website2log w, download_type_ndr_com d, contentedition c,
+content ct, clients_p p, client_status s, companies_p a
+where w.download_type = d.download_type
+and w.contentedition_id = c.contentedition_id
+and c.content_id = ct.content_id
+and ct.product is not null
+and w.cust_code = p.cust_code
+and p.client_status = s.status_code
+and a.company_id = p.company_code
+group by ct.service
+order by 2 desc;" > /usr/share/databases/dsujanto/toptenservice.csv
+
+
+# for current client (S)
+select a.major_segment__c, count(p.cust_code) from website2log w, download_type_ndr_com d, contentedition c,
+content ct, clients_p p, client_status s, companies_p a
+where w.download_type = d.download_type
+and w.contentedition_id = c.contentedition_id
+and c.content_id = ct.content_id
+and ct.product is not null
+and w.cust_code = p.cust_code
+and p.client_status = s.status_code
+and s.status_code ='S'
+and a.company_id = p.company_code
+group by a.major_segment__c
+order by 2 desc
+
+
+psql -d ndr_ddms -t -A -F"," -c "select a.major_segment__c, count(p.cust_code) from website2log w, download_type_ndr_com d, contentedition c,
+content ct, clients_p p, client_status s, companies_p a
+where w.download_type = d.download_type
+and w.contentedition_id = c.contentedition_id
+and c.content_id = ct.content_id
+and ct.product is not null
+and w.cust_code = p.cust_code
+and p.client_status = s.status_code
+and s.status_code ='S'
+and a.company_id = p.company_code
+group by a.major_segment__c
+
+--for current active clients
+ndr_ddms=> select a.major_segment__c, count(p.cust_code) from website2log w, download_type_ndr_com d, contentedition c,
+content ct, clients_p p, client_status s, companies_p a
+where w.download_type = d.download_type
+and w.contentedition_id = c.contentedition_id
+and c.content_id = ct.content_id
+and ct.product is not null
+and w.cust_code = p.cust_code
+and p.client_status = s.status_code
+and s.status_code ='S'
+and a.company_id = p.company_code and p.active='t'
+group by a.major_segment__c
+order by 2 desc;
+
+psql -d ndr_ddms -t -A -F"," -c "select a.major_segment__c, count(p.cust_code) from website2log w, download_type_ndr_com d, contentedition c,
+content ct, clients_p p, client_status s, companies_p a
+where w.download_type = d.download_type
+and w.contentedition_id = c.contentedition_id
+and c.content_id = ct.content_id
+and ct.product is not null
+and w.cust_code = p.cust_code
+and p.client_status = s.status_code
+and s.status_code ='S'
+and a.company_id = p.company_code
+and p.active='t'
+group by a.major_segment__c
+order by 2 desc;
+
+#prospective, active clients
+select a.major_segment__c, count(p.cust_code) from website2log w, download_type_ndr_com d, contentedition c,
+content ct, clients_p p, client_status s, companies_p a
+where w.download_type = d.download_type
+and w.contentedition_id = c.contentedition_id
+and c.content_id = ct.content_id
+and ct.product is not null
+and w.cust_code = p.cust_code
+and p.client_status = s.status_code
+and s.status_code in('T', 'P', 'C')
+and a.company_id = p.company_code and p.active='t'
+group by a.major_segment__c
+order by 2 desc;
+
+psql -d ndr_ddms -t -A -F"," -c "select a.major_segment__c, count(p.cust_code) from website2log w, download_type_ndr_com d, contentedition c,
+content ct, clients_p p, client_status s, companies_p a
+where w.download_type = d.download_type
+and w.contentedition_id = c.contentedition_id
+and c.content_id = ct.content_id
+and ct.product is not null
+and w.cust_code = p.cust_code
+and p.client_status = s.status_code
+and s.status_code in('T', 'P', 'C')
+and a.company_id = p.company_code and p.active='t'
+group by a.major_segment__c
+order by 2 desc;" > /usr/share/databases/dsujanto/paclients.csv
+
+select a.major_segment__c, ct.product, count(*) from website2log w, download_type_ndr_com d, contentedition c,
+content ct, clients_p p, client_status s, companies_p a
+where w.download_type = d.download_type
+and w.contentedition_id = c.contentedition_id
+and c.content_id = ct.content_id
+and ct.product is not null
+and w.cust_code = p.cust_code
+and p.client_status = s.status_code
+and s.status_code ='S'
+and a.company_id = p.company_code
+and a.major_segment__c in ('(Private) Wealth Management', 'Asset Owners', 'Hedge Funds')
+group by a.major_segment__c, ct.product
+order by 1,3 desc
+
+select a.major_segment__c, ct.service, count(*) from website2log w, download_type_ndr_com d, contentedition c,
+content ct, clients_p p, client_status s, companies_p a
+where w.download_type = d.download_type
+and w.contentedition_id = c.contentedition_id
+and c.content_id = ct.content_id
+and ct.product is not null
+and w.cust_code = p.cust_code
+and p.client_status = s.status_code
+and s.status_code ='S'
+and a.company_id = p.company_code
+and a.major_segment__c in ('(Private) Wealth Management', 'Asset Owners', 'Hedge Funds')
+group by a.major_segment__c, ct.service
+order by 1,3 desc
+
+
+psql -d ndr_ddms -t -A -F"," -c "select a.major_segment__c, ct.product, count(*) from website2log w, download_type_ndr_com d, contentedition c,
+content ct, clients_p p, client_status s, companies_p a
+where w.download_type = d.download_type
+and w.contentedition_id = c.contentedition_id
+and c.content_id = ct.content_id
+and ct.product is not null
+and w.cust_code = p.cust_code
+and p.client_status = s.status_code
+and s.status_code ='S'
+and a.company_id = p.company_code
+and a.major_segment__c in ('(Private) Wealth Management', 'Asset Owners', 'Hedge Funds')
+group by a.major_segment__c, ct.product
+order by 1,3 desc;" > /usr/share/databases/dsujanto/cproduct.csv
+
+psql -d ndr_ddms -t -A -F"," -c "select a.major_segment__c, ct.service, count(*) from website2log w, download_type_ndr_com d, contentedition c,
+content ct, clients_p p, client_status s, companies_p a
+where w.download_type = d.download_type
+and w.contentedition_id = c.contentedition_id
+and c.content_id = ct.content_id
+and ct.product is not null
+and w.cust_code = p.cust_code
+and p.client_status = s.status_code
+and s.status_code ='S'
+and a.company_id = p.company_code
+and a.major_segment__c in ('(Private) Wealth Management', 'Asset Owners', 'Hedge Funds')
+group by a.major_segment__c, ct.service
+order by 1,3 desc;" > /usr/share/databases/dsujanto/cservice.csv
+
+select a.major_segment__c, count(*) from website2log w, download_type_ndr_com d, contentedition c,
+content ct, clients_p p, client_status s, companies_p a
+where w.download_type = d.download_type
+and w.contentedition_id = c.contentedition_id
+and c.content_id = ct.content_id
+and ct.product is not null
+and w.cust_code = p.cust_code
+and p.client_status = s.status_code
+and s.status_code ='S'
+and a.company_id = p.company_code
+group by a.major_segment__c
+order by 2 desc
+order by 2 desc;" > /usr/share/databases/dsujanto/clientsegment.csv
+
+psql -d ndr_ddms -t -A -F"," -c "select a.major_segment__c, count(p.cust_code) from website2log w, download_type_ndr_com d, contentedition c,
+content ct, clients_p p, client_status s, companies_p a
+where w.download_type = d.download_type
+and w.contentedition_id = c.contentedition_id
+and c.content_id = ct.content_id
+and ct.product is not null
+and w.cust_code = p.cust_code
+and p.client_status = s.status_code
+and s.status_code in('T', 'P', 'C')
+and a.company_id = p.company_code
+group by a.major_segment__c
+order by 2 desc;" > /usr/share/databases/dsujanto/trialsegment.csv
+
+
+
+select ((extract(year from sysdate)-2016)*12+(extract(month from sysdate))) as months,client_status,major_segment__c,count(*) from logs_with_client_co group by 1,2,3 order by 1,4;
+
+
+select client_status,major_segment__c,count(*) from logs_with_client_co group by 1,2,3 order by 1,4;
+
+#prospective clients
+select a.major_segment__c, ct.product, count(*) from website2log w, download_type_ndr_com d, contentedition c,
+content ct, clients_p p, client_status s, companies_p a
+where w.download_type = d.download_type
+and w.contentedition_id = c.contentedition_id
+and c.content_id = ct.content_id
+and ct.product is not null
+and w.cust_code = p.cust_code
+and p.client_status = s.status_code
+and s.status_code in ('T', 'P', 'C')
+and a.company_id = p.company_code
+and a.major_segment__c in ('Asset Owners', 'Insurance Firm', '(Private) Wealth Management')
+group by a.major_segment__c, ct.product
+order by 1,3 desc
+
+select a.major_segment__c, ct.service, count(*) from website2log w, download_type_ndr_com d, contentedition c,
+content ct, clients_p p, client_status s, companies_p a
+where w.download_type = d.download_type
+and w.contentedition_id = c.contentedition_id
+and c.content_id = ct.content_id
+and ct.product is not null
+and w.cust_code = p.cust_code
+and p.client_status = s.status_code
+and s.status_code in ('T', 'P', 'C')
+and a.company_id = p.company_code
+and a.major_segment__c in ('Asset Owners', 'Insurance Firm', '(Private) Wealth Management')
+group by a.major_segment__c, ct.service
+order by 1,3 desc
+
+
+psql -d ndr_ddms -t -A -F"," -c "select a.major_segment__c, ct.product, count(*) from website2log w, download_type_ndr_com d, contentedition c,
+content ct, clients_p p, client_status s, companies_p a
+where w.download_type = d.download_type
+and w.contentedition_id = c.contentedition_id
+and c.content_id = ct.content_id
+and ct.product is not null
+and w.cust_code = p.cust_code
+and p.client_status = s.status_code
+and s.status_code in ('T', 'P', 'C')
+and a.company_id = p.company_code
+and a.major_segment__c in ('Asset Owners', 'Insurance Firm', '(Private) Wealth Management')
+
+
+
+select a.major_segment__c, ct.product, count(*) from website2log w, download_type_ndr_com d, contentedition c,
+content ct, clients_p p, client_status s, companies_p a
+where w.download_type = d.download_type
+and w.contentedition_id = c.contentedition_id
+and c.content_id = ct.content_id
+and ct.product is not null
+and w.cust_code = p.cust_code
+and p.client_status = s.status_code
+and s.status_code in ('T', 'P', 'C')
+and a.company_id = p.company_code
+and a.major_segment__c in ('Asset Owners', 'Insurance Firm', '(Private) Wealth Management')
+group by a.major_segment__c, ct.product
+order by 1,3 desc
+
+#current clients
+
+
+
+
+
+psql -d ndr_ddms -t -A -F"," -c "select a.major_segment__c, ct.service, count(*) from website2log w, download_type_ndr_com d, contentedition c,
+content ct, clients_p p, client_status s, companies_p a
+where w.download_type = d.download_type
+and w.contentedition_id = c.contentedition_id
+and c.content_id = ct.content_id
+and ct.product is not null
+and w.cust_code = p.cust_code
+and p.client_status = s.status_code
+and s.status_code in ('T', 'P', 'C')
+and a.company_id = p.company_code
+and a.major_segment__c in ('Asset Owners', 'Insurance Firm', '(Private) Wealth Management')
+group by a.major_segment__c, ct.service
+order by 1,3 desc" > /usr/share/databases/dsujanto/pservice.csv
+
+
+--daily active users by downloadtype
+psql -d ndr_ddms -t -A -F"," -c "select w.sysdate,
+w.download_type,
+count(distinct w.cust_code) as dau_count
+from website2log w, clients_p c
+where w.cust_code = c.cust_code
+and c.active='t'
+group by 1,2
+order by 1,2;" >/usr/share/databases/dsujanto/dauser.csv
+
+ --and date(w1.sysdate) = date(datetime(w2.sysdate, '-1 day'))
+#retention
+
+with sample as (select
+  w1.sysdate,
+  count(distinct w1.cust_code) as total_users,
+  count(distinct w2.cust_code) as retain_users
+from website2log w1
+ left join website2log as w2 on
+    (w1.cust_code = w2.cust_code
+    and w1.sysdate = (w2.sysdate - 1))
+group by w1.sysdate
+)
+select sample.sysdate, sample.total_users, sample.retain_users,
+a.major_segment__c
+from sample, clients_p p , companies_p a, client_status s
+where p.cust_code = sample.retain_users
+    and p.client_status = s.status_code
+    and s.status_code ='S'
+    and a.company_id = p.company_code 
+    and p.active='t'
+    and a.major_segment__c = 'Hedge Funds'
+order by 1;
+
+
+select cust_code,count(sysdate) from website2log group by 1 order by 2 desc limit 100;
+
+
+
+select
+  w1.sysdate,
+  w1.cust_code,
+  w2.cust_code
+from website2log as w1 
+  left join website2log as w2 on
+    (w1.cust_code = w2.cust_code
+    and w1.sysdate = (w2.sysdate - 1))
+order by 1
+limit 10;
+
+
+with retained_user as (
+select
+  w1.sysdate,
+  w1.cust_code as current,
+  w2.cust_code as retained
+from website2log as w1 
+  left join website2log as w2 on
+    (w1.cust_code = w2.cust_code
+    and w1.sysdate = (w2.sysdate - 1))
+)
+select ru.sysdate,
+a.major_segment__c,
+count(distinct ru.current), 
+count(distinct ru.retained)
+from retained_user ru, clients_p p , companies_p a, client_status s
+where p.cust_code = ru.retained
+    and p.client_status = s.status_code
+    and s.status_code ='S'
+    and a.company_id = p.company_code 
+    and p.active='t'
+   -- and a.major_segment__c = 'Hedge Funds'
+group by ru.sysdate, a.major_segment__c
+limit 10;
+
+
+CREATE INDEX custcode_idx ON website2log (cust_code);
+
+create table retained_clients as 
+(select
+  date(w1.sysdate) as dt,
+  count(distinct w1.cust_code) as total_clients,
+  count(distinct w2.cust_code) as retained_clients
+from website2log as w1 
+  left join website2log as w2 on
+    (w1.cust_code = w2.cust_code
+    and w1.sysdate = (w2.sysdate - 1))
+group by 1
+order by 1)
+
+
+select
+  extract(month from w1.sysdate) as month,
+  count(distinct w1.cust_code) as total_clients,
+  count(distinct w2.cust_code) as retained_clients
+from website2log as w1 
+  left join website2log as w2 on
+    (w1.cust_code = w2.cust_code
+    and w1.sysdate = (w2.sysdate - 1))
+group by 1
+order by 1 
+limit 10;
+
+
+select a.major_segment__c, count(p.cust_code) from website2log w, download_type_ndr_com d, contentedition c,
+content ct, clients_p p, client_status s, companies_p a
+where w.download_type = d.download_type
+and w.contentedition_id = c.contentedition_id
+and c.content_id = ct.content_id
+and ct.product is not null
+and w.cust_code = p.cust_code
+and p.client_status = s.status_code
+and s.status_code ='S'
+and a.company_id = p.company_code and p.active='t'
+group by a.major_segment__c
+order by 2 desc;
+
+select a.primary_focus__c, count(p.cust_code) 
+from website2log w, clients_p p, client_status s, companies_p a 
+where w.cust_code = p.cust_code 
+and p.client_status = s.status_code 
+and s.status_code = 'S' 
+and a.company_id = p.company_code 
+group by a.primary_focus__c
+order by 1;
+
+
+psql -d ndr_ddms -t -A -F"," -c "select w.sysdate,
+w.download_type,
+count(distinct w.cust_code) as dau_count
+from website2log w, clients_p c
+where w.cust_code = c.cust_code
+and c.active='t'
+group by 1,2
+order by 1,2;" >/usr/share/databases/dsujanto/dauser.csv
+
+
+psql -d ndr_ddms -t -A -F"," -c "select a.primary_focus__c, count(p.cust_code) from website2log w, download_type_ndr_com d, contentedition c,
+content ct, clients_p p, client_status s, companies_p a
+where w.download_type = d.download_type
+and w.contentedition_id = c.contentedition_id
+and c.content_id = ct.content_id
+and ct.product is not null
+and w.cust_code = p.cust_code
+and p.client_status = s.status_code
+and s.status_code ='S'
+and a.company_id = p.company_code and p.active='t'
+group by a.primary_focus__c
+order by 2 desc;" >/usr/share/databases/dsujanto/fixactiveclient.csv

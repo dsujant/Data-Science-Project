@@ -1,0 +1,250 @@
+NDR Presentation
+========================================================
+author: Daavid, Diana, Matthias, and Sonia
+date: December 13, 2018
+autosize: true
+
+
+Exploratory
+========================================================
+
+- Website Log
+  - Number of times website access
+  - Download types by popularity
+  - Services by popularity
+- Current Client
+  - Site traffic
+  - Segment
+- Prospective Client
+  - Site traffic
+  - Segment
+  
+
+<!-- Download Types by Popularity -->
+<!-- ======================================================== -->
+<!-- left:70% -->
+<!-- ![Popular Download Types](downloadtype.png) -->
+
+<!-- **** -->
+<!-- About 64% of downloads were from the NDR hyperlink(LN), followed by PDF bundlers (21%, PB), and E-mail hyperlink (12%, EL) -->
+
+Questions
+========================================================
+
+
+- Who are our clients?
+- What are they interested in?
+- When are they accessing these products and services? 
+- Why? What current events are driving this interest?
+
+
+What are NDR's Customers interested in?
+========================================================
+
+POPULAR PRODUCTS
+
+![Popular Products](products.png)
+
+***
+```{r, echo=FALSE}
+library()
+p <- data.frame(matrix(c(1,2,3,4,5,6,7,8,9,10, "Ned's Insights", "U.S Economics", "U.S Equities", "Global Equities", "U.S. Fixed Income", "NDR Advisory", "ETF Selection","Global Economics","U.S. Sectors & Industries", "Commodities"), nrow=10, byrow = FALSE))
+
+colnames(p)<-c("", "TOP TEN PRODUCTS")
+
+knitr::kable(p)
+
+```
+
+POPULAR SERVICES
+====
+
+![Popular Services](services.png)
+
+
+
+
+
+Who are NDR's Current and Prospective Clients?
+========================================================
+
+Client Segments:
+
+Current Clients
+![Client Segments](segment_cc.png) 
+***
+&nbsp;&nbsp;&nbsp;
+
+
+Prospective Clients
+![Client Segments](segment_pc.png)
+
+
+NDR Clients: Products of Interest
+========================================================
+
+Current Clients
+![Products of Interest](ccproduct.png) 
+*** 
+&nbsp;&nbsp;&nbsp;
+
+Prospective Clients
+![Product of Interest](pproduct.png)
+
+
+
+
+NDR Clients: Services of Interest
+========================================================
+
+Current Clients
+![Services of Interest](ccservice.png) 
+***
+&nbsp;&nbsp;&nbsp;
+
+Prospective Clients
+![Services of Interest](pservice.png)
+
+
+
+
+<!-- NDR Prospective Clients -->
+<!-- ======================================================== -->
+
+<!-- Client Segments -->
+
+
+<!-- ![Client Segments](segment_pc.png) -->
+
+
+<!-- NDR Prospective Clients -->
+<!-- ======================================================== -->
+
+<!-- Products of Interest: -->
+
+<!-- ![Product of Interest](pproduct.png) -->
+
+
+
+
+<!-- NDR Prospective Clients -->
+<!-- ======================================================== -->
+
+<!-- Services of Interest: -->
+
+<!-- ![Services of Interest](pservice.png) -->
+
+
+
+
+
+NDR All Clients 
+========================================================
+
+Site Traffic
+
+![Site Traffic](site_traffic_cc.png)
+
+
+NDR Current Clients
+========================================================
+
+Monthly Hit by Segment
+
+![Hit per Month](hit_segment_cc.png)
+
+
+
+
+NDR Prospective Clients
+========================================================
+left:70%
+Asset Owners (37%) - Daily Hits
+
+![Asset Owners](prosp_ao_stat.png)
+
+****
+- Tax Season
+- Politics
+- Market Turmoil
+
+
+NDR Prospective Clients
+========================================================
+left:70%
+Insurance Firms (28%) - Daily Hits
+
+![Insurance Firms](prosp_if_stat.png)
+
+****
+- Natural Disaster (Earthquakes, seasons)
+- Broad Market
+
+
+
+NDR Prospective Clients
+========================================================
+
+Private Wealth Management (27%) - Daily Hits
+
+![Private Wealth Management](prosp_wm_stat.png)
+
+****
+- Tax Season
+- Super Users
+
+
+
+
+NDR Prospective Clients
+========================================================
+
+Hedge Funds(6%) - Daily Hits
+
+![Hedge Funds](prosp_hf_stat.png)
+
+****
+- Trump (5/9/16) Brexit (6/23/16) May (7/11/16)
+- NK
+- VIX
+
+
+NDR Prospective Clients
+========================================================
+
+MutualFunds(2%) - Daily Hits
+
+![Mutual Funds](prosp_mf_stat.png)
+
+****
+- Oil Price
+- 2016 US Politics 
+
+
+Recommendation
+========================================================
+
+- Customer acquisition: targeted advertising for trial memberships
+- Fee structure for superuser clients
+- Segment-specific content focus
+
+
+
+Other Findings
+========================================================
+
+This plot shows the top 10 cust_codes ranked by total views in website2log who were at least partially interested in stocks. It turns out that the top 10 viewers were <i>exclusively</i> interested in stocks (U.S. Equities,Global Equities,Europe Equities, U.S. Stock Selection, Europe Stock Selection,ETF Selection, U.S. Sectors & Industries,Emerging Markets Equities)
+
+==============
+![Stock Interest](finalplot.png)
+
+
+
+
+THE END
+==========
+
+![NDR](products.png)
+
+
+
